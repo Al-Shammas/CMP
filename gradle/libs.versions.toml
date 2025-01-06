@@ -17,9 +17,9 @@ kotlin = "2.1.0"
 
 navigationCompose = "2.7.0-alpha03"
 
-koin = "3.6.0-alpha3"
-koinCompose = "3.6.0-alpha3"
-koinComposeMultiplatform = "1.2.0-alpha3"
+koin = "4.0.0"
+koinCompose = "4.0.0"
+koinComposeMultiplatform = "4.0.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
