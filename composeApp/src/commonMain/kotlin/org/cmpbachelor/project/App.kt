@@ -1,7 +1,10 @@
 package org.cmpbachelor.project
 
-import androidx.compose.runtime.*
+import androidx.compose.material.Scaffold
+import androidx.compose.runtime.Composable
+import androidx.navigation.compose.rememberNavController
 import navigation.SetupNavGraph
+import org.cmpbachelor.project.ui.componants.BottomBar
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.koin.compose.KoinContext
 
@@ -10,7 +13,15 @@ import org.koin.compose.KoinContext
 fun App() {
     androidx.compose.material3.MaterialTheme {
         KoinContext {
-            SetupNavGraph()
+            val navController = rememberNavController()
+
+            Scaffold(bottomBar = {
+                BottomBar(navController)
+            }) {
+                SetupNavGraph(navController)
+            }
+
+
         }
     }
 }

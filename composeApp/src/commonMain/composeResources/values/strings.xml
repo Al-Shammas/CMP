@@ -1,0 +1,11 @@
+<resources>
+    <string name="home">Home</string>
+    <string name="recommendations">Empfehlungen</string>
+    <string name="cart">Einkaufswagen</string>
+
+    <string-array name="str_arr">
+        <item>item 1</item>
+        <item>item 2</item>
+        <item>item 3</item>
+    </string-array>
+</resources>
