@@ -14,10 +14,10 @@ import androidx.navigation.NavController
 import cmpbachelor.composeapp.generated.resources.Res
 import cmpbachelor.composeapp.generated.resources.bag_icon
 import cmpbachelor.composeapp.generated.resources.baseline_home_24
-import cmpbachelor.composeapp.generated.resources.cart
 import cmpbachelor.composeapp.generated.resources.home
-import cmpbachelor.composeapp.generated.resources.recommendations
+import cmpbachelor.composeapp.generated.resources.second
 import cmpbachelor.composeapp.generated.resources.star_icon
+import cmpbachelor.composeapp.generated.resources.third
 import navigation.Screen
 import org.cmpbachelor.project.ui.componants.BottomBarDims.iconSize
 import org.jetbrains.compose.resources.ExperimentalResourceApi
@@ -50,7 +50,7 @@ fun BottomBar(navController: NavController) {
                     modifier = Modifier.size(iconSize).padding(3.dp)
                 )
             },
-            label = { Text(text = stringResource(resource = Res.string.cart)) },
+            label = { Text(text = stringResource(resource = Res.string.second)) },
             selected = false,
             onClick = { /*Handle click here*/ }
         )
@@ -62,7 +62,7 @@ fun BottomBar(navController: NavController) {
                     modifier = Modifier.size(iconSize)
                 )
             },
-            label = { Text(text = stringResource(Res.string.recommendations)) },
+            label = { Text(text = stringResource(Res.string.third)) },
             selected = false,
             onClick = { /*Handle click here*/ }
         )

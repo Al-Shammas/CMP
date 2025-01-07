@@ -1,7 +1,7 @@
 <resources>
     <string name="home">Home</string>
-    <string name="recommendations">Empfehlungen</string>
-    <string name="cart">Einkaufswagen</string>
+    <string name="second">second</string>
+    <string name="third">third</string>
 
     <string-array name="str_arr">
         <item>item 1</item>
