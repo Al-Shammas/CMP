@@ -3,8 +3,8 @@ package org.cmpbachelor.project
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.rememberNavController
-import navigation.SetupNavGraph
-import org.cmpbachelor.project.ui.componants.BottomBar
+import org.cmpbachelor.project.navigation.SetupNavGraph
+import org.cmpbachelor.project.core.presentation.componants.BottomBar
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.koin.compose.KoinContext
 
@@ -20,8 +20,6 @@ fun App() {
             }) {
                 SetupNavGraph(navController)
             }
-
-
         }
     }
 }

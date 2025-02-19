@@ -1,11 +1,14 @@
 package org.cmpbachelor.project
 
 import android.app.Application
-import di.KoinInitializer
+import org.cmpbachelor.project.di.initKoin
+import org.koin.android.ext.koin.androidContext
 
 class CmpApp : Application() {
     override fun onCreate() {
         super.onCreate()
-        KoinInitializer(applicationContext).init()
+        initKoin {
+            androidContext(this@CmpApp)
+        }
     }
 }

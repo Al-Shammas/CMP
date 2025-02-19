@@ -1,12 +1,12 @@
 package org.cmpbachelor.project
 
 import androidx.compose.ui.window.ComposeUIViewController
-import di.KoinInitializer
+import org.cmpbachelor.project.di.initKoin
 
 fun MainViewController() =
     ComposeUIViewController(
         configure = {
-            KoinInitializer().init()
+            initKoin()
         }
     ) {
         App()

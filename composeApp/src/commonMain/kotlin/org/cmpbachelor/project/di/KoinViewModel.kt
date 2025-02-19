@@ -1,4 +1,4 @@
-package di
+package org.cmpbachelor.project.di
 
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
