@@ -4,22 +4,24 @@ package org.cmpbachelor.project.catalog.presentation.product_list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import org.cmpbachelor.project.catalog.domain.Product
-import org.cmpbachelor.project.catalog.domain.ProductRepository
-import org.cmpbachelor.project.core.domain.onError
-import org.cmpbachelor.project.core.domain.onSuccess
-import org.cmpbachelor.project.core.presentation.toUiText
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.cmpbachelor.project.catalog.domain.Product
+import org.cmpbachelor.project.catalog.domain.ProductRepository
+import org.cmpbachelor.project.core.domain.onError
+import org.cmpbachelor.project.core.domain.onSuccess
+import org.cmpbachelor.project.core.presentation.toUiText
 
 class ProductListViewModel(
     private val productRepository: ProductRepository,
@@ -27,14 +29,22 @@ class ProductListViewModel(
 
     private var cachedProducts = emptyList<Product>()
     private var searchJob: Job? = null
+    private var observeFavoriteJob: Job? = null
 
     private val _state = MutableStateFlow(ProductListState())
-    val state = _state.asStateFlow()
-
-    init {
-        fetchProducts()
-        observeSearchQuery()
-    }
+    val state = _state
+        .onStart {
+            observeSearchQuery()
+            if(cachedProducts.isEmpty()) {
+                fetchProducts()
+            }
+            observeFavoriteProduct()
+        }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000L),
+            _state.value
+        )
 
     fun onAction(action: ProductListAction) {
         when (action) {
@@ -84,6 +94,19 @@ class ProductListViewModel(
                     )
                 }
             }
+    }
+
+
+    private fun observeFavoriteProduct() {
+        observeFavoriteJob?.cancel()
+        observeFavoriteJob = productRepository
+            .getFavoriteProducts()
+            .onEach { favoriteProduct ->
+                _state.update { it.copy(
+                    favoriteProducts = favoriteProduct
+                ) }
+            }
+            .launchIn(viewModelScope)
     }
 
 

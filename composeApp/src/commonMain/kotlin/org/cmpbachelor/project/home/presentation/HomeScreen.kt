@@ -18,18 +18,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import org.cmpbachelor.project.core.presentation.componants.NavigationListItem
-import org.cmpbachelor.project.di.koinViewModel
-import org.cmpbachelor.project.domain.HomeScreenItemsList
+import org.cmpbachelor.project.home.domain.HomeScreenItemsList
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun HomeScreen(
-    homeViewModel: HomeViewModel = koinViewModel(),
+    viewModel: HomeViewModel,
     navController: NavController,
 ) {
 
-    val timer by homeViewModel.timer.collectAsState()
+    val timer by viewModel.timer.collectAsState()
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -38,7 +37,7 @@ fun HomeScreen(
     ) {
         item {
             Text(
-                text = homeViewModel.title.value,
+                text = viewModel.title.value,
                 modifier = Modifier
                     .fillMaxWidth().size(60.dp)
                     .padding(horizontal = 16.dp),

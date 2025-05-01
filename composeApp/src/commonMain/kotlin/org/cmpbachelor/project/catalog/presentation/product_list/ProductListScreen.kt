@@ -41,12 +41,11 @@ import org.cmpbachelor.project.catalog.presentation.product_list.componants.Prod
 import org.cmpbachelor.project.core.presentation.AquaGreenColor
 import org.cmpbachelor.project.core.presentation.DesertWhite
 import org.cmpbachelor.project.core.presentation.PaleBlueColor
-import org.cmpbachelor.project.di.koinViewModel
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun ProductListScreenRoot(
-    viewModel: ProductListViewModel = koinViewModel<ProductListViewModel>(),
+    viewModel: ProductListViewModel,
     onProductClick: (Product) -> Unit,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -174,10 +173,10 @@ fun ProductListScreen(
                 ) { pageIndex ->
 
                     Box(
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
                         when (pageIndex) {
                             0 -> {
                                 if (state.isLoading) {
@@ -205,8 +204,8 @@ fun ProductListScreen(
                                         state.searchQuery.isNotBlank() -> {
                                             ProductGrid(
                                                 products = state.searchResults,
-                                                onProductClick = {
-
+                                                onProductClick = { product ->
+                                                    onAction(ProductListAction.OnProductClick(product = product))
                                                 },
                                                 modifier = Modifier.fillMaxSize()
 
@@ -216,7 +215,8 @@ fun ProductListScreen(
                                         else -> {
                                             ProductGrid(
                                                 products = state.productListResults,
-                                                onProductClick = {
+                                                onProductClick = { product ->
+                                                    onAction(ProductListAction.OnProductClick(product = product))
                                                 },
                                                 modifier = Modifier.fillMaxSize(),
                                             )
@@ -234,8 +234,9 @@ fun ProductListScreen(
                                     )
                                 } else {
                                     ProductGrid(
-                                        products = state.productListResults,
-                                        onProductClick = {
+                                        products = state.favoriteProducts,
+                                        onProductClick = { product ->
+                                            onAction(ProductListAction.OnProductClick(product = product))
                                         },
                                         modifier = Modifier.fillMaxSize(),
                                     )

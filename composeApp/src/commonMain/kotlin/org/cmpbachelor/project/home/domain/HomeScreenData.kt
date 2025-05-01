@@ -1,15 +1,14 @@
-package org.cmpbachelor.project.domain
+package org.cmpbachelor.project.home.domain
 
-import org.cmpbachelor.project.navigation.Screen
+import org.cmpbachelor.project.navigation.Route
 
 data class HomeScreenListItem(
     val tile: String,
-    val route: String,
+    val route: Route,
 )
 
 val HomeScreenItemsList = listOf<HomeScreenListItem>(
-    HomeScreenListItem("Greeting", Screen.Greeting.route),
-    HomeScreenListItem("NFC", Screen.NFC.route),
-    HomeScreenListItem("ShoppingCart", Screen.ShoppingCart.route),
-    HomeScreenListItem("Forth", Screen.Greeting.route),
+    HomeScreenListItem("Greeting", Route.Greeting),
+    HomeScreenListItem("NFC", Route.NFC),
+    HomeScreenListItem("catalog", Route.Catalog),
 )

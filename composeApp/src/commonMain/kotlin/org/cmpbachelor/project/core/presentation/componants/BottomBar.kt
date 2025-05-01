@@ -18,8 +18,8 @@ import cmpbachelor.composeapp.generated.resources.home
 import cmpbachelor.composeapp.generated.resources.second
 import cmpbachelor.composeapp.generated.resources.star_icon
 import cmpbachelor.composeapp.generated.resources.third
-import org.cmpbachelor.project.navigation.Screen
 import org.cmpbachelor.project.core.presentation.componants.BottomBarDims.iconSize
+import org.cmpbachelor.project.navigation.Route
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -40,7 +40,7 @@ fun BottomBar(navController: NavController) {
             },
             label = { Text(text = stringResource(resource = Res.string.home)) },
             selected = true,
-            onClick = { navController.navigate(route = Screen.Home.route)}
+            onClick = { navController.navigate(route = Route.Home)}
         )
         BottomNavigationItem(
             icon = {
