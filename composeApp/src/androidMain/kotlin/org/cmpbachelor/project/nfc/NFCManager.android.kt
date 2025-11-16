@@ -29,7 +29,6 @@ actual class NFCManager : NfcAdapter.ReaderCallback {
         if (mNfcAdapter != null) {
             val options = Bundle()
 
-            // Adds a delay, workaround for devices with NFC firmware that polls too quickly
             options.putInt(NfcAdapter.EXTRA_READER_PRESENCE_CHECK_DELAY, 500)
 
             mNfcAdapter!!.enableReaderMode(

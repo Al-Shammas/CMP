@@ -30,7 +30,7 @@ actual class NFCManager() : NSObject(), NFCNDEFReaderSessionDelegateProtocol {
     actual fun Register() {
         if (NFCNDEFReaderSession.readingAvailable()) {
             val session = NFCNDEFReaderSession(this, null, false)
-            session.alertMessage = "Hold your iPhone near the item, or don't—I don't care."
+            session.alertMessage = "Hold your iPhone near the item."
             session.beginSession()
         }
     }
