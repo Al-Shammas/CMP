@@ -1,74 +1,80 @@
 package org.cmpbachelor.project.core.presentation.componants
 
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import cmpbachelor.composeapp.generated.resources.Res
-import cmpbachelor.composeapp.generated.resources.bag_icon
-import cmpbachelor.composeapp.generated.resources.baseline_home_24
-import cmpbachelor.composeapp.generated.resources.home
-import cmpbachelor.composeapp.generated.resources.second
-import cmpbachelor.composeapp.generated.resources.star_icon
-import cmpbachelor.composeapp.generated.resources.third
-import org.cmpbachelor.project.core.presentation.componants.BottomBarDims.iconSize
-import org.cmpbachelor.project.navigation.Route
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import cmpbachelor.composeapp.generated.resources.Res
+import cmpbachelor.composeapp.generated.resources.baseline_home_24
+import cmpbachelor.composeapp.generated.resources.baseline_qr_code_scanner_24
+import cmpbachelor.composeapp.generated.resources.cart
+import cmpbachelor.composeapp.generated.resources.home
+import cmpbachelor.composeapp.generated.resources.scan
+import org.cmpbachelor.project.navigation.Route
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun BottomBar(navController: NavController) {
-    BottomNavigation(
-        backgroundColor = Color.White,
+    var selectedRoute: Route by remember { mutableStateOf(Route.CatalogGraph) }
+
+    NavigationBar(
+        containerColor = Color.White,
         contentColor = Color.Black
     ) {
-        BottomNavigationItem(
+        NavigationBarItem(
             icon = {
                 Icon(
                     painter = painterResource(resource = Res.drawable.baseline_home_24),
-                    ""
+                    contentDescription = null
                 )
             },
             label = { Text(text = stringResource(resource = Res.string.home)) },
-            selected = true,
-            onClick = { navController.navigate(route = Route.Home)}
+            selected = selectedRoute == Route.CatalogGraph,
+            onClick = {
+                selectedRoute = Route.CatalogGraph
+                navController.navigate(route = Route.CatalogGraph)
+            }
         )
-        BottomNavigationItem(
+        NavigationBarItem(
             icon = {
                 Icon(
-                    painter = painterResource(resource = Res.drawable.bag_icon),
-                    contentDescription = "",
-                    modifier = Modifier.size(iconSize).padding(3.dp)
+                    imageVector = Icons.Default.ShoppingCart,
+                    contentDescription = null,
+                    tint = Color.Black
                 )
             },
-            label = { Text(text = stringResource(resource = Res.string.second)) },
-            selected = false,
-            onClick = { /*Handle click here*/ }
+            label = { Text(text = stringResource(resource = Res.string.cart)) },
+            selected = selectedRoute == Route.Cart,
+            onClick = {
+                selectedRoute = Route.Cart
+                navController.navigate(route = Route.Cart)
+            }
         )
-        BottomNavigationItem(
+        NavigationBarItem(
             icon = {
                 Icon(
-                    painter = painterResource(resource = Res.drawable.star_icon),
-                    contentDescription = "",
-                    modifier = Modifier.size(iconSize)
+                    painter = painterResource(resource = Res.drawable.baseline_qr_code_scanner_24),
+                    contentDescription = null,
                 )
             },
-            label = { Text(text = stringResource(Res.string.third)) },
-            selected = false,
-            onClick = { /*Handle click here*/ }
+            label = { Text(text = stringResource(resource = Res.string.scan)) },
+            selected = selectedRoute == Route.Scan,
+            onClick = {
+                selectedRoute = Route.Scan
+                navController.navigate(route = Route.Scan)
+            }
         )
     }
-}
-
-private object BottomBarDims {
-    val iconSize = 24.dp
 }

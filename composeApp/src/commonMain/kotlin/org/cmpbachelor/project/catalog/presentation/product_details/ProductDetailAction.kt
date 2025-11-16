@@ -7,5 +7,5 @@ sealed interface ProductDetailAction{
     data object OnBackClick: ProductDetailAction
     data object OnFavoriteClick: ProductDetailAction
     data class OnSelectedProductChange(val product: Product): ProductDetailAction
-    data class AddToShoppingCart(val product: Product): ProductDetailAction
+    data object AddToShoppingCart : ProductDetailAction
 }

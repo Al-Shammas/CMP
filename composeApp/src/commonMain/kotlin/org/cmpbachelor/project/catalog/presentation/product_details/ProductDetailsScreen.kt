@@ -21,9 +21,14 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -50,18 +55,30 @@ fun ProductDetailScreenRoot(
     onBackClick: () -> Unit,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val snackBarHostState = remember { SnackbarHostState() }
 
-    ProductDetailScreen(
-        state = state,
-        onAction = { action ->
-            when (action) {
-                is ProductDetailAction.OnBackClick -> onBackClick()
-                else -> Unit
+    LaunchedEffect(viewModel.uiEvents) {
+        viewModel.uiEvents.collect { event ->
+            when (event) {
+                is UiEvent.ShowSnackBar ->
+                    snackBarHostState.showSnackbar(event.message)
             }
-            viewModel.onAction(action)
         }
-    )
-
+    }
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackBarHostState) }
+    ) {
+        ProductDetailScreen(
+            state = state,
+            onAction = { action ->
+                when (action) {
+                    is ProductDetailAction.OnBackClick -> onBackClick()
+                    else -> Unit
+                }
+                viewModel.onAction(action)
+            }
+        )
+    }
 }
 
 @Composable
@@ -172,7 +189,9 @@ private fun ProductDetailScreen(
                             .height(48.dp)
                             .wrapContentWidth(),
                         colors = ButtonDefaults.buttonColors(DesertWhite),
-                        onClick = {},
+                        onClick = {
+                            onAction(ProductDetailAction.AddToShoppingCart)
+                        }
                     ) {
                         Icon(
                             imageVector = Icons.Default.ShoppingCart,
