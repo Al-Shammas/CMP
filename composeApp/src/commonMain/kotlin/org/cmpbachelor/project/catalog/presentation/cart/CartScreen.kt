@@ -17,11 +17,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import org.cmpbachelor.project.catalog.data.database.CartItemEntity
 import org.cmpbachelor.project.catalog.presentation.cart.componants.CartItemRow
 import org.cmpbachelor.project.core.presentation.AquaGreenColor
 import org.cmpbachelor.project.core.presentation.GoldYellow
 import org.cmpbachelor.project.core.presentation.PaleBlueColor
 import org.cmpbachelor.project.core.presentation.roundTo
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun CartScreenRoot(
@@ -176,38 +178,16 @@ fun CartScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(20.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                        .padding(top = 14.dp, bottom = 20.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     // Order summary
                     Column(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text(
-                                text = "Subtotal",
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = Color.Gray
-                            )
-                            Text(
-                                text = "$${state.totalPrice.roundTo(2)}",
-                                style = MaterialTheme.typography.bodyLarge,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.Black
-                            )
-                        }
-
-                        HorizontalDivider(
-                            modifier = Modifier.padding(vertical = 4.dp),
-                            thickness = 1.dp,
-                            color = Color.LightGray.copy(alpha = 0.3f)
-                        )
 
                         Row(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
@@ -231,7 +211,7 @@ fun CartScreen(
                         onClick = onCheckout,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(56.dp),
+                            .height(40.dp).padding(start = 20.dp, end = 20.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = AquaGreenColor
                         ),
@@ -258,4 +238,40 @@ fun CartScreen(
             }
         }
     }
+}
+
+@Preview()
+@Composable
+fun CartScreenWithItemsPreview() {
+    CartScreen(
+        state = CartState(
+            isLoading = false,
+            items = listOf(
+                CartItemEntity(
+                    productId = 1,
+                    title = "iPhone 9",
+                    price = 549.0,
+                    thumbnail = "https://cdn.dummyjson.com/product-images/1/thumbnail.jpg",
+                    quantity = 2
+                ),
+                CartItemEntity(
+                    productId = 2,
+                    title = "iPhone X",
+                    price = 899.0,
+                    thumbnail = "https://cdn.dummyjson.com/product-images/2/thumbnail.jpg",
+                    quantity = 1
+                ),
+                CartItemEntity(
+                    productId = 3,
+                    title = "Samsung Universe 9",
+                    price = 1249.0,
+                    thumbnail = "https://cdn.dummyjson.com/product-images/3/thumbnail.jpg",
+                    quantity = 1
+                )
+            ),
+            totalPrice = 1997.0
+        ),
+        onAction = {},
+        onCheckout = {}
+    )
 }
