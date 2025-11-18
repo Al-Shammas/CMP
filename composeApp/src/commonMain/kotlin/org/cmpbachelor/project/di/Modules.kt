@@ -14,6 +14,7 @@ import org.cmpbachelor.project.catalog.presentation.cart.CartViewModel
 import org.cmpbachelor.project.catalog.presentation.product_details.ProductDetailViewModel
 import org.cmpbachelor.project.catalog.presentation.product_list.ProductListViewModel
 import org.cmpbachelor.project.core.data.HttpClientFactory
+import org.cmpbachelor.project.scan.presentation.ScanViewModel
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
@@ -42,4 +43,5 @@ val sharedModule =
         viewModelOf(::SelectedProductViewModel)
         viewModelOf(::ProductDetailViewModel)
         viewModelOf(::CartViewModel)
+        viewModelOf(::ScanViewModel)
     }

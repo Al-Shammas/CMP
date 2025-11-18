@@ -1,6 +1,5 @@
 package org.cmpbachelor.project.navigation
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -28,7 +27,10 @@ import org.cmpbachelor.project.catalog.presentation.product_details.ProductDetai
 import org.cmpbachelor.project.catalog.presentation.product_list.ProductListScreenRoot
 import org.cmpbachelor.project.catalog.presentation.product_list.ProductListViewModel
 import org.cmpbachelor.project.core.presentation.componants.BottomBar
+import org.cmpbachelor.project.scan.presentation.ScanAction
 import org.koin.compose.viewmodel.koinViewModel
+import org.cmpbachelor.project.scan.presentation.ScanScreenRoot
+import org.cmpbachelor.project.scan.presentation.ScanViewModel
 
 @Composable
 fun SetupNavGraph() {
@@ -95,9 +97,24 @@ fun SetupNavGraph() {
                 }
 
                 composable<Route.Scan> {
-                    Column {
+                    val viewModel = koinViewModel<ScanViewModel>()
+                    val state by viewModel.state.collectAsStateWithLifecycle()
 
+                    LaunchedEffect(state.navigateToProduct) {
+                        state.navigateToProduct?.let { productId ->
+                            navController.navigate(Route.ProductDetail(productId)) {
+                                popUpTo(Route.Catalog) {
+                                    inclusive = false
+                                }
+                            }
+                            viewModel.onAction(ScanAction.OnNavigationHandled)
+                        }
                     }
+
+                    ScanScreenRoot(
+                        viewModel = viewModel,
+                        onBackClick = { navController.navigateUp() }
+                    )
                 }
             }
         }

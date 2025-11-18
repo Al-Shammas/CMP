@@ -68,6 +68,8 @@ kotlin {
             implementation(libs.bundles.ktor)
 
             implementation(libs.bundles.coil)
+
+            implementation("network.chaintech:qr-kit:2.0.0")
         }
         nativeMain.dependencies {
             implementation(libs.ktor.client.darwin)
