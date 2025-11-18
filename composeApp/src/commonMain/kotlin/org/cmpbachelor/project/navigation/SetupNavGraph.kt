@@ -72,12 +72,12 @@ fun SetupNavGraph() {
                     val selectedProduct by selectedProductViewModel.selectedProduct.collectAsStateWithLifecycle()
 
                     LaunchedEffect(selectedProduct) {
-                        selectedProduct?.let {
+                        if (selectedProduct != null) {
                             viewModel.onAction(
-                                ProductDetailAction.OnSelectedProductChange(
-                                    it
-                                )
+                                ProductDetailAction.OnSelectedProductChange(selectedProduct!!)
                             )
+                        } else {
+                            viewModel.onAction(ProductDetailAction.FetchProductById)
                         }
                     }
 
@@ -100,10 +100,10 @@ fun SetupNavGraph() {
                     val viewModel = koinViewModel<ScanViewModel>()
                     val state by viewModel.state.collectAsStateWithLifecycle()
 
-                    LaunchedEffect(state.navigateToProduct) {
-                        state.navigateToProduct?.let { productId ->
+                    LaunchedEffect(state.productId) {
+                        state.productId?.let { productId ->
                             navController.navigate(Route.ProductDetail(productId)) {
-                                popUpTo(Route.Catalog) {
+                                popUpTo(Route.Scan) {
                                     inclusive = false
                                 }
                             }

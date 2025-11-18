@@ -17,6 +17,8 @@ import kotlinx.coroutines.launch
 import org.cmpbachelor.project.catalog.data.database.CartItemEntity
 import org.cmpbachelor.project.catalog.domain.ProductRepository
 import org.cmpbachelor.project.catalog.domain.ShoppingCartRepository
+import org.cmpbachelor.project.core.domain.onError
+import org.cmpbachelor.project.core.domain.onSuccess
 import org.cmpbachelor.project.navigation.Route
 
 class ProductDetailViewModel(
@@ -41,6 +43,30 @@ class ProductDetailViewModel(
             SharingStarted.WhileSubscribed(5000L),
             _state.value
         )
+
+    private fun fetchProductById(id: Int) {
+        viewModelScope.launch {
+            _state.update { it.copy(isLoading = true) }
+
+            productRepository.getProducts()
+                .onSuccess { products ->
+                    val product = products.find { it.id == id }
+                    _state.update {
+                        it.copy(
+                            product = product,
+                            isLoading = false
+                        )
+                    }
+                }
+                .onError { error ->
+                    _state.update {
+                        it.copy(
+                            isLoading = false
+                        )
+                    }
+                }
+        }
+    }
 
     fun onAction(action: ProductDetailAction) {
         when (action) {
@@ -78,9 +104,13 @@ class ProductDetailViewModel(
                 )
             }
 
+            is ProductDetailAction.FetchProductById -> {
+                // Explicit fetch request from navigation (for Scan case)
+                fetchProductById(productId)
+            }
+
             else -> Unit
         }
-
     }
 
     private fun observeFavoriteStatus() {

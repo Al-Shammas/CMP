@@ -55,7 +55,6 @@ fun ScanScreen(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Top bar with back button
             Row(
                 modifier = Modifier
                     .fillMaxWidth()

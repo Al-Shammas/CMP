@@ -17,7 +17,7 @@ class ScanViewModel : ViewModel() {
                 if (productId != null) {
                     _state.update {
                         it.copy(
-                            navigateToProduct = productId,
+                            productId = productId,
                             error = null
                         )
                     }
@@ -25,14 +25,14 @@ class ScanViewModel : ViewModel() {
                     _state.update {
                         it.copy(
                             error = "Invalid QR code: ${action.scannedText}",
-                            navigateToProduct = null
+                            productId = null
                         )
                     }
                 }
             }
             is ScanAction.OnNavigationHandled -> {
                 _state.update {
-                    it.copy(navigateToProduct = null)
+                    it.copy(productId = null)
                 }
             }
             is ScanAction.OnErrorDismissed -> {
