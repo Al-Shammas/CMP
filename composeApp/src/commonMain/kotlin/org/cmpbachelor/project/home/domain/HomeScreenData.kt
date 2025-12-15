@@ -8,7 +8,7 @@ data class HomeScreenListItem(
 )
 
 val HomeScreenItemsList = listOf<HomeScreenListItem>(
-    HomeScreenListItem("Greeting", Route.Greeting),
-    HomeScreenListItem("NFC", Route.NFC),
-    HomeScreenListItem("catalog", Route.Catalog),
+//    HomeScreenListItem("Greeting", Route.Greeting),
+//    HomeScreenListItem("NFC", Route.NFC),
+//    HomeScreenListItem("catalog", Route.Catalog),
 )
