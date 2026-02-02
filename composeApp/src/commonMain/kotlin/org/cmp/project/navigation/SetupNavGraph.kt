@@ -18,6 +18,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import androidx.navigation.toRoute
+import kotlinx.coroutines.delay
 import org.cmp.project.catalog.presentation.SelectedProductViewModel
 import org.cmp.project.catalog.presentation.cart.CartScreenRoot
 import org.cmp.project.catalog.presentation.cart.CartViewModel
@@ -102,6 +103,7 @@ fun SetupNavGraph() {
 
                     LaunchedEffect(state.productId) {
                         state.productId?.let { productId ->
+                            delay(2000)
                             navController.navigate(Route.ProductDetail(productId)) {
                                 popUpTo(Route.Scan) {
                                     inclusive = false

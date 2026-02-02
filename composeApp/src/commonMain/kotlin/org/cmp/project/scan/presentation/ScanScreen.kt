@@ -1,26 +1,43 @@
 package org.cmp.project.scan.presentation
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import org.cmp.project.core.presentation.AquaGreenColor
-import org.cmp.project.scan.presentation.componants.FlashlightIcon
-import qrscanner.QrScanner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.cmp.project.scan.presentation.componants.ErrorCard
+import org.cmp.project.scan.presentation.componants.FlashlightToggle
+import org.cmp.project.scan.presentation.componants.QrScannerBox
+import org.cmp.project.scan.presentation.componants.SuccessCard
 
 @Composable
 fun ScanScreenRoot(
@@ -42,9 +59,15 @@ fun ScanScreen(
     onAction: (ScanAction) -> Unit,
     onBackClick: () -> Unit
 ) {
-    var scannedCode by remember { mutableStateOf("") }
-    var flashlightOn by remember { mutableStateOf(false) }
+    var flashlightOn by rememberSaveable { mutableStateOf(false) }
     var openImagePicker by remember { mutableStateOf(false) }
+
+    val hapticFeedback = LocalHapticFeedback.current
+    LaunchedEffect(state.productId) {
+        if (state.productId != null) {
+            hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -55,185 +78,110 @@ fun ScanScreen(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-                    .statusBarsPadding(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = onBackClick) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Back",
-                        tint = Color.White
-                    )
-                }
-
-                Text(
-                    text = "Scan QR Code",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
-
-                // Placeholder for symmetry
-                Spacer(modifier = Modifier.size(48.dp))
-            }
+            ScanHeader(onBackClick = onBackClick)
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Instructions
-            Text(
-                text = "Position QR code within the frame",
-                style = MaterialTheme.typography.bodyLarge,
-                color = Color.White,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(horizontal = 32.dp)
-            )
+            InstructionText()
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Scanner box
-            Box(
-                modifier = Modifier
-                    .size(280.dp)
-                    .clip(RoundedCornerShape(24.dp))
-                    .border(
-                        width = 3.dp,
-                        color = AquaGreenColor,
-                        shape = RoundedCornerShape(24.dp)
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                QrScanner(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clip(RoundedCornerShape(24.dp)),
-                    flashlightOn = flashlightOn,
-                    openImagePicker = openImagePicker,
-                    onCompletion = { result ->
-                        scannedCode = result
-                        onAction(ScanAction.OnQrCodeScanned(result))
-                    },
-                    imagePickerHandler = { isOpen ->
-                        openImagePicker = isOpen
-                    },
-                    onFailure = { error ->
-                        // Camera/scanner errors (not QR validation errors)
-                        val message = if (error.isEmpty()) {
-                            "Scanner error"
-                        } else {
-                            error
-                        }
-                        // You can handle camera errors here if needed
-                        println("Scanner error: $message")
-                    }
-                )
-            }
+            QrScannerBox(
+                flashlightOn = flashlightOn,
+                openImagePicker = openImagePicker,
+                onScanned = { code ->
+                    onAction(ScanAction.OnQrCodeScanned(code))
+                },
+                onImagePickerStateChange = { isOpen ->
+                    openImagePicker = isOpen
+                }
+            )
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Flashlight toggle
-            Card(
-                modifier = Modifier
-                    .padding(horizontal = 40.dp)
-                    .clickable { flashlightOn = !flashlightOn },
-                colors = CardDefaults.cardColors(
-                    containerColor = Color.White.copy(alpha = 0.1f)
-                ),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Row(
-                    modifier = Modifier.padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    FlashlightIcon(
-                        isOn = flashlightOn,
-                        tint = if (flashlightOn) AquaGreenColor else Color.White
-                    )
-                    Text(
-                        text = if (flashlightOn) "Flash On" else "Flash Off",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = Color.White
-                    )
-                }
-            }
+            FlashlightToggle(
+                flashlightOn = flashlightOn,
+                onToggle = { flashlightOn = !flashlightOn }
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Tip
-            Text(
-                text = "💡 Tip: Make sure the code is well-lit and in focus",
-                style = MaterialTheme.typography.bodySmall,
-                color = Color.White.copy(alpha = 0.7f),
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(horizontal = 32.dp)
+            TipText()
+        }
+
+        if (state.lastScannedCode != null && state.productId != null) {
+            SuccessCard(
+                scannedCode = state.lastScannedCode,
+                productId = state.productId,
+                onDismiss = { onAction(ScanAction.OnNavigationHandled) },
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(16.dp)
             )
         }
 
-        // Show scanned result temporarily
-        if (scannedCode.isNotEmpty()) {
-            Card(
+        state.error?.let { error ->
+            ErrorCard(
+                error = error.asString(),
+                lastScannedCode = state.lastScannedCode,
+                onDismiss = { onAction(ScanAction.OnErrorDismissed) },
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = AquaGreenColor
-                ),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = "Scanned!",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
-                        )
-                        Text(
-                            text = scannedCode,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = Color.White.copy(alpha = 0.9f),
-                            maxLines = 2
-                        )
-                    }
-
-                    IconButton(onClick = { scannedCode = "" }) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Close",
-                            tint = Color.White
-                        )
-                    }
-                }
-            }
-        }
-
-        // Error snackbar
-        if (state.error != null) {
-            Snackbar(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(16.dp),
-                action = {
-                    TextButton(onClick = { onAction(ScanAction.OnErrorDismissed) }) {
-                        Text("OK", color = Color.White)
-                    }
-                },
-                containerColor = Color.Red
-            ) {
-                Text(state.error, color = Color.White)
-            }
+                    .padding(16.dp)
+            )
         }
     }
+}
+
+@Composable
+private fun ScanHeader(
+    onBackClick: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .statusBarsPadding(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        IconButton(onClick = onBackClick) {
+            Icon(
+                imageVector = Icons.Default.ArrowBack,
+                contentDescription = "Back",
+                tint = Color.White
+            )
+        }
+
+        Text(
+            text = "Scan Product Code",
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+            color = Color.White
+        )
+
+        Spacer(modifier = Modifier.size(48.dp))
+    }
+}
+
+@Composable
+private fun InstructionText() {
+    Text(
+        text = "Position QR code within the frame",
+        style = MaterialTheme.typography.bodyLarge,
+        color = Color.White,
+        textAlign = TextAlign.Center,
+        modifier = Modifier.padding(horizontal = 32.dp)
+    )
+}
+
+@Composable
+private fun TipText() {
+    Text(
+        text = "💡 Tip: Make sure the code is well-lit and in focus",
+        style = MaterialTheme.typography.bodySmall,
+        color = Color.White.copy(alpha = 0.7f),
+        textAlign = TextAlign.Center,
+        modifier = Modifier.padding(horizontal = 32.dp)
+    )
 }
